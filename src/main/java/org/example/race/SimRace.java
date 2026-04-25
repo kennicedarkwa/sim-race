@@ -27,8 +27,14 @@ public class SimRace {
             threadList.add(thread);
         }
 
-        while (isAnyCarIsStillRunning(threadList)) {
+        for (Thread thread : threadList) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         System.out.println("**** Endstand nach " + numberOfRounds + " Runden ****");
         carList = carList.stream().sorted(Comparator.comparingDouble(Car::getTime)).toList();
         int currentRank = 1;
@@ -36,14 +42,5 @@ public class SimRace {
             System.out.println(currentRank + ". Platz: " + car);
             currentRank++;
         }
-    }
-
-    public boolean isAnyCarIsStillRunning(List<Thread> threadList) {
-        for (Thread thread : threadList) {
-            if (thread.isAlive()) {
-                return true;
-            }
-        }
-        return false;
     }
 }
